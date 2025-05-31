@@ -133,7 +133,7 @@ export function AuthProvider({ children }) {
     
     // Show message if provided
     if (message && typeof window !== 'undefined') {
-      alert(message);
+      // alert(message);
     }
   };
 

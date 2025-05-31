@@ -44,15 +44,15 @@ export default function TaskComponent() {
       newSelected.add(taskId);
     }
     setSelectedTasks(newSelected);
-    setSelectAll(newSelected.size === currentTasks.length);
+    setSelectAll(newSelected.size === tasks.length);
   };
 
-  // Handle select all for current page
+  // Handle select all for all tasks
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedTasks(new Set());
     } else {
-      const newSelected = new Set(currentTasks.map(task => task._id));
+      const newSelected = new Set(tasks.map(task => task._id));
       setSelectedTasks(newSelected);
     }
     setSelectAll(!selectAll);
@@ -91,7 +91,7 @@ export default function TaskComponent() {
         {selectedTasks.size > 0 && (
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-600">
-              {selectedTasks.size} task(s) selected on page {currentPage}
+              {selectedTasks.size} task(s) selected
             </span>
             <select 
               className="border rounded px-2 py-1"
