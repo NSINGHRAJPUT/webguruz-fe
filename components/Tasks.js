@@ -9,14 +9,19 @@ export default function TaskComponent() {
   const [selectedTasks, setSelectedTasks] = useState(new Set());
   const [selectAll, setSelectAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalTasks, setTotalTasks] = useState(0);
   const itemsPerPage = 5;
 
-  // Fetch all tasks data on component mount
+  // Fetch paginated tasks data
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const response = await api.tasks.getAll();
+      const response = await api.tasks.getAll({
+        page: currentPage,
+        limit: itemsPerPage
+      });
       setTasks(response.tasks);
+      setTotalTasks(response.count);
     } catch (err) {
       console.error('Error fetching tasks:', err);
       setError('Failed to load tasks');
@@ -27,13 +32,9 @@ export default function TaskComponent() {
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [currentPage]);
 
-  // Get current tasks for pagination
-  const indexOfLastTask = currentPage * itemsPerPage;
-  const indexOfFirstTask = indexOfLastTask - itemsPerPage;
-  const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
-  const totalPages = Math.ceil(tasks.length / itemsPerPage);
+  const totalPages = Math.ceil(totalTasks / itemsPerPage);
 
   // Handle individual task selection
   const handleTaskSelect = (taskId) => {
@@ -47,7 +48,7 @@ export default function TaskComponent() {
     setSelectAll(newSelected.size === tasks.length);
   };
 
-  // Handle select all for all tasks
+  // Handle select all for current page tasks
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedTasks(new Set());
@@ -129,7 +130,7 @@ export default function TaskComponent() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {currentTasks.map((task) => (
+            {tasks.map((task) => (
               <tr key={task._id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <input
@@ -161,7 +162,7 @@ export default function TaskComponent() {
       </div>
       <div className="px-6 py-4 flex justify-between items-center border-t border-gray-200">
         <div className="text-sm text-gray-500">
-          Showing {indexOfFirstTask + 1} to {Math.min(indexOfLastTask, tasks.length)} of {tasks.length} entries
+          Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalTasks)} of {totalTasks} entries
         </div>
         <div className="flex gap-2">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
