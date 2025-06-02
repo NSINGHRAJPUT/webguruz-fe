@@ -52,7 +52,7 @@ export default function AdminDashboard() {
         console.log('Tasks data:', tasksData);
         
         setUsers(usersData.users);
-        setTasks(tasksData.tasks);
+        setTasks(tasksData.count);
         console.log('Dashboard data loaded successfully');
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
@@ -149,7 +149,8 @@ export default function AdminDashboard() {
                   : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Tasks ({tasks.length})
+              Tasks 
+              ({tasks})
             </button>
           </nav>
         </div>
